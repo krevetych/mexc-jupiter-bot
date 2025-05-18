@@ -1,0 +1,10 @@
+spread_threshold_percent: 2.0
+spread_precision: 1.5
+contract_depth: 20
+vwap: 500.0
+volume_24h_min: 2_000_000
+jupiter_quote_interval_sec: 7
+telegram_bot_token: 8082200004:AAF8JOHmHStTCpaQN1In2WzfRsFD9t3LGBc
+telegram_chat_ids: 
+  - 1801549984
+  - 1022722819
