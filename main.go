@@ -1,47 +1,48 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
-	"math"
 	"mexccrypto/internal/config"
 	"mexccrypto/jupiter"
 	"mexccrypto/mexc"
-	"mexccrypto/tg"
 	"mexccrypto/types"
 	"time"
+
+	"github.com/redis/go-redis/v9"
+	"github.com/robfig/cron/v3"
 )
 
-type lastState struct {
-	price    float64
-	spread   float64
-	loggedAt time.Time
-}
+func runLoop(ctx context.Context, redisClient *redis.Client, cfg *types.Config) {
+	ticker := time.NewTicker(500 * time.Millisecond)
+	spreadLogger := config.NewSpreadLogger(cfg.SpreadPrecision)
+	defer ticker.Stop()
 
-var lastLogged = make(map[string]lastState)
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			mexcPrices, err := mexc.FetchMexcFuturesPrices(ctx, redisClient, cfg)
+			if err != nil {
+				log.Printf("[Mexc] Fetch price error: %v", err)
+				continue
+			}
 
-func shouldLog(symbol string, newPrice, newSpread float64, cfg *types.Config, cooldown time.Duration) bool {
-	last, ok := lastLogged[symbol]
-	if ok {
-		samePrice := math.Abs(last.price-newPrice) < 1e-8
-		spreadDelta := math.Abs(last.spread - newSpread)
-		recent := time.Since(last.loggedAt) < cooldown
+			jupPrices, err := jupiter.FetchAllPrices(ctx, redisClient, cfg)
+			if err != nil {
+				log.Printf("[Jupiter] Fetch price error: %v", err)
+				continue
+			}
 
-		if samePrice && spreadDelta < cfg.SpreadPrecision && recent {
-			return false
+			spreadLogger.CompareAndPrintSpreads(mexcPrices, jupPrices, cfg)
 		}
 	}
-
-	lastLogged[symbol] = lastState{
-		price:    newPrice,
-		spread:   newSpread,
-		loggedAt: time.Now(),
-	}
-
-	return true
 }
 
 func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	cfg, err := config.LoadConfig("config.yaml")
 	if err != nil {
 		log.Fatalf("load config: %v", err)
@@ -52,66 +53,30 @@ func main() {
 		log.Fatalf("load SPL map: %v", err)
 	}
 
-	priceCh := make(chan types.PriceInfo)
-	go mexc.RunWS(priceCh, cfg, splMap)
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+	})
 
-	const cooldown = 10 * time.Second
-
-	for price := range priceCh {
-		splToken, ok := splMap[price.Symbol]
-		if !ok {
-			continue
+	c := cron.New(cron.WithLocation(time.UTC))
+	_, err = c.AddFunc("0 3 * * *", func() {
+		if err := mexc.UpdateFuturesTokens(ctx, redisClient, splMap, cfg.Volume24hMin); err != nil {
+			log.Printf("[Mexc] update futures tokens error: %v", err)
+		} else {
+			log.Printf("[Mexc] update futures tokens success")
 		}
+	})
 
-		asks, _, err := mexc.FetchOrderBook(price.Symbol, cfg.ContractDepth)
-		if err != nil {
-			log.Printf("orderbook fetch error for %s: %v", price.Symbol, err)
-			continue
-		}
-
-		vwapAsk, err := mexc.VWAP(asks, cfg.VWAP, "ask")
-		if err != nil {
-			log.Printf("VWAP calc error for %s: %v", price.Symbol, err)
-			continue
-		}
-
-		jupPrice, err := jupiter.FetchPrice(price.Symbol, splToken, cfg)
-		if err != nil || jupPrice == 0 {
-			log.Printf("jupiter error for %s: %v", price.Symbol, err)
-			continue
-		}
-
-		spread := 100 * math.Abs(vwapAsk-jupPrice) / ((vwapAsk + jupPrice) / 2)
-		if spread >= cfg.SpreadThresholdPercent {
-			if shouldLog(price.Symbol, jupPrice, spread, cfg, cooldown) {
-				log.Printf("[ARBITRAGE] %s: MEXC VWAPAsk %.8f | Jupiter %.8f | Spread %.2f%% | Volume %.2fM",
-					price.Symbol, vwapAsk, jupPrice, spread, price.Volume24h/1_000_000)
-				msg := fmt.Sprintf(
-					`<b>ARBITRAGE ALERT</b>
-<code>%s</code>
-<b>MEXC VWAPAsk:</b> <code>%.8f</code>
-<b>Jupiter:</b> <code>%.8f</code>
-<b>Spread:</b> %.2f%%
-<b>Volume:</b> %.2fM
-
-<b>MEXC:</b> <code>https://www.mexc.com/ru-RU/futures/%s?_from=search</code>
-<b>Jupiter:</b> <code>%s</code>`,
-					price.Symbol,
-					vwapAsk,
-					jupPrice,
-					spread,
-					price.Volume24h/1_000_000,
-					price.Symbol,
-					splToken,
-				)
-
-				for _, chatID := range cfg.TelegramChatIDs {
-					err := tg.SendMessage(cfg.TelegramBotToken, chatID, msg)
-					if err != nil {
-						log.Printf("telegram send error to %d: %v", chatID, err)
-					}
-				}
-			}
-		}
+	if err != nil {
+		log.Fatalf("failed to schedule daily update: %v", err)
 	}
+	c.Start()
+
+	if err := mexc.UpdateFuturesTokens(ctx, redisClient, splMap, cfg.Volume24hMin); err != nil {
+		log.Fatalf("update futures tokens error: %v", err)
+	}
+
+	go runLoop(ctx, redisClient, cfg)
+
+	select {}
+
 }

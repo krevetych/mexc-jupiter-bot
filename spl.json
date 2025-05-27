@@ -1,22 +1,82 @@
 {
-  "JUP_USDT": "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
-  "WIF_USDT": "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
-  "BONK_USDT": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
-  "PYTH_USDT": "HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3",
-  "RAY_USDT": "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
-  "JTO_USDT": "jtojtomepa8beP8AuQc6eXt5FriJwfFMwQx2v2f9mCL",
-  "LAUNCHCOIN_USDT": "Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk",
-  "SNS_USDT": "SNS8DJbHc34nKySHVhLGMUUE72ho6igvJaxtq9T3cX3",
-  "BOOP_USDT": "boopkpWqe68MSxLqBGogs8ZbUDN4GXaLhFwNP7mpP1i",
-  "GFM_USDT": "E1jCTXdkMRoawoWoqfbhiNkkLbxcSHPssMo36U84pump",
-  "TITCOIN_USDT": "FtUEW73K6vEYHfbkfpdBZfWpxgQar2HipGdbutEhpump",
-  "PWEASE_USDT": "CniPCE4b3s8gSUPhUiyMjXnytrEqUrMfSsnbBjLCpump",
-  "GOONC_USDT": "ENfpbQUM5xAnNP8ecyEQGFJ6KwbuPjMwv7ZjR29cDuAb",
-  "DUPE_USDT": "fRfKGCriduzDwSudCwpL7ySCEiboNuryhZDVJtr1a1C",
-  "USELESS_USDT": "Dz9mQ9NzkBcCsuGPFJ3r1bS4wgqKMHBPiVuniW8Mbonk",
-  "STARTUP_USDT": "97PVGU2DzFqsAWaYU17ZBqGvQFmkqtdMywYBNPAfy8vy",
-  "MOONPIG_USDT": "Ai3eKAWjzKMV8wRwd41nVP83yqfbAVJykhvJVPxspump",
-  "HOUSE_USDT": "DitHyRMQiSDhn5cnKMJV2CDDt6sVct96YrECiM49pump",
-  "NC_USDT": "B89Hd5Juz7JP2dxCZXFJWk4tMTcbw7feDhuWGb3kq5qE",
-  "LUCE_USDT": "CBdCxKo9QavR9hfShgpEBG3zekorAeD7W1jfq2o3pump"
+  "JUP_USDT": {
+    "mint": "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
+    "decimals": 1000000
+  },
+  "WIF_USDT": {
+    "mint": "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
+    "decimals": 1000000
+  },
+  "BONK_USDT": {
+    "mint": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+    "decimals": 100000
+  },
+  "PYTH_USDT": {
+    "mint": "HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3",
+    "decimals": 1000000
+  },
+  "RAY_USDT": {
+    "mint": "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
+    "decimals": 1000000
+  },
+  "JTO_USDT": {
+    "mint": "jtojtomepa8beP8AuQc6eXt5FriJwfFMwQx2v2f9mCL",
+    "decimals": 1000000000
+  },
+  "LAUNCHCOIN_USDT": {
+    "mint": "Ey59PH7Z4BFU4HjyKnyMdWt5GGN76KazTAwQihoUXRnk",
+    "decimals": 1000000000
+  },
+  "SNS_USDT": {
+    "mint": "SNS8DJbHc34nKySHVhLGMUUE72ho6igvJaxtq9T3cX3",
+    "decimals": 100000
+  },
+  "BOOP_USDT": {
+    "mint": "boopkpWqe68MSxLqBGogs8ZbUDN4GXaLhFwNP7mpP1i",
+    "decimals": 1000000000
+  },
+  "GFM_USDT": {
+    "mint": "E1jCTXdkMRoawoWoqfbhiNkkLbxcSHPssMo36U84pump",
+    "decimals": 1000000
+  },
+  "TITCOIN_USDT": {
+    "mint": "FtUEW73K6vEYHfbkfpdBZfWpxgQar2HipGdbutEhpump",
+    "decimals": 1000000
+  },
+  "PWEASE_USDT": {
+    "mint": "CniPCE4b3s8gSUPhUiyMjXnytrEqUrMfSsnbBjLCpump",
+    "decimals": 1000000
+  },
+  "GOONC_USDT": {
+    "mint": "ENfpbQUM5xAnNP8ecyEQGFJ6KwbuPjMwv7ZjR29cDuAb",
+    "decimals": 1000000000
+  },
+  "DUPE_USDT": {
+    "mint": "fRfKGCriduzDwSudCwpL7ySCEiboNuryhZDVJtr1a1C",
+    "decimals": 1000000000
+  },
+  "USELESS_USDT": {
+    "mint": "Dz9mQ9NzkBcCsuGPFJ3r1bS4wgqKMHBPiVuniW8Mbonk",
+    "decimals": 1000000
+  },
+  "STARTUP_USDT": {
+    "mint": "97PVGU2DzFqsAWaYU17ZBqGvQFmkqtdMywYBNPAfy8vy",
+    "decimals": 1000000000
+  },
+  "MOONPIG_USDT": {
+    "mint": "Ai3eKAWjzKMV8wRwd41nVP83yqfbAVJykhvJVPxspump",
+    "decimals": 1000000
+  },
+  "HOUSE_USDT": {
+    "mint": "DitHyRMQiSDhn5cnKMJV2CDDt6sVct96YrECiM49pump",
+    "decimals": 1000000
+  },
+  "NC_USDT": {
+    "mint": "B89Hd5Juz7JP2dxCZXFJWk4tMTcbw7feDhuWGb3kq5qE",
+    "decimals": 1000000000
+  },
+  "LUCE_USDT": {
+    "mint": "CBdCxKo9QavR9hfShgpEBG3zekorAeD7W1jfq2o3pump",
+    "decimals": 1000000
+  }
 }
